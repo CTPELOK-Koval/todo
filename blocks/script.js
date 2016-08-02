@@ -1,5 +1,4 @@
 'use strict'
-// console.log(div);
 
 var div = document.getElementsByClassName('myToDo')[0];
 
@@ -19,14 +18,44 @@ ul.setAttribute('class', 'myToDoList');
 div.appendChild(ul);
 
 var toDoCount = 0;
+var array =[];
 
-function func(param){
+var ToDoItem = function(name) {
+  this.id = toDoCount;
+  this.status = false;
+  this.name = name;
+}
+
+function funcAdd(param){
   if(param.checked){
     param.parentNode.setAttribute("class","myToDoList__item myToDoList__item_done");
+    for (var i = array.length - 1; i >= 0; i--) {
+      if(array[i].name == param.parentNode.children[1].innerHTML){
+        array[i].status = true;
+      }
+    }
+    console.log(array);
   } else {
     param.parentNode.setAttribute("class","myToDoList__item");
+    for (var i = array.length - 1; i >= 0; i--) {
+      if(array[i].name == param.parentNode.children[1].innerHTML){
+        array[i].status = false;
+      }
+    }
+    console.log(array);
   }
 }
+
+function funcRemove(param) {
+  for (var i = array.length - 1; i >= 0; i--) {
+    if (param.parentNode.children[0].id == array[i].id) {
+      array.splice(i,1);
+    }
+  }
+  param.parentNode.remove();
+  console.log(array);
+}
+
 
 var add = document.getElementsByClassName('myToDo__buttonAdd')[0];
 add.onclick = function() {
@@ -37,18 +66,20 @@ add.onclick = function() {
     select.setAttribute('type', 'checkbox');
     select.setAttribute('class', 'myToDoList__itemSelect');
     select.setAttribute('id', toDoCount);
-    select.setAttribute('onclick', 'func(this)');
+    select.setAttribute('onclick', 'funcAdd(this)');
     li.appendChild(select);
 
     var text = document.createElement('label');
     text.setAttribute('for', select.id);
     text.setAttribute('class','myToDoList__itemText');
-    text.innerHTML = inputText.value;
+    var toDoItem = new ToDoItem(inputText.value);
+    array.push(toDoItem);
+    text.innerHTML = toDoItem.name;
     li.appendChild(text);
 
     var del = document.createElement('button');
     del.setAttribute('class', 'myToDo__buttonDel');
-    del.setAttribute('onclick','this.parentNode.remove()');
+    del.setAttribute('onclick','funcRemove(this)');
     del.innerHTML = "Delete"
     li.appendChild(del);
 
